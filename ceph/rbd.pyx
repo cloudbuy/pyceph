@@ -83,7 +83,7 @@ cdef class Pool:
 
     def resize(self, image_name, new_size):
         rbd = self.open(image_name)
-        rbd.resize(new_size)
+        return rbd.resize(new_size)
 
     def stat(self, image_name):
         return self.open(image_name).stat()
@@ -153,6 +153,12 @@ cdef class Rbd:
         if ret != 0:
             raise make_ex(ret, "error closing rbd")
         self.closed = True
+
+    def resize(self, new_size):
+        cdef int ret
+        ret = rbd_resize(self.image, new_size)
+        if ret != 0:
+            raise make_ex(ret, "error resizing rbd")
 
     def stat(self):
         cdef int ret

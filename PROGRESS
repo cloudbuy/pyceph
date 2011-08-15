@@ -1,31 +1,31 @@
 librbd
 ======
 
-rbd_version                  DONE (ceph.rbd.version_info)
-rbd_list                     DONE (ceph.rbd.Pool.list)
-rbd_create                   DONE (ceph.rbd.Pool.create)
-rbd_remove                   DONE (ceph.rbd.Pool.remove)
-rbd_copy                     DONE (ceph.rbd.Pool.copy)
-rbd_rename                   DONE (ceph.rbd.Pool.rename)
+rbd_version                DONE (ceph.rbd.version_info)
+rbd_list                   DONE (ceph.rbd.Pool.list)
+rbd_create                 DONE (ceph.rbd.Pool.create)
+rbd_remove                 DONE (ceph.rbd.Pool.remove)
+rbd_copy                   DONE (ceph.rbd.Pool.copy)
+rbd_rename                 DONE (ceph.rbd.Pool.rename)
 
-rbd_open                     DONE (ceph.rbd.Pool.open)
-rbd_close                    DONE (ceph.rbd.Rbd.close)
-rbd_resize                   MISSING
-rbd_stat                     DONE (ceph.rbd.Rbd.stat, ceph.rbd.Pool.stat)
+rbd_open                   DONE (ceph.rbd.Pool.open)
+rbd_close                  DONE (ceph.rbd.Rbd.close)
+rbd_resize                 DONE (ceph.rbd.Rbd.resize, ceph.rbd.Pool.resize)
+rbd_stat                   DONE (ceph.rbd.Rbd.stat, ceph.rbd.Pool.stat)
 
-rbd_snap_list                MISSING
-rbd_snap_list_end            MISSING
-rbd_snap_create              MISSING
-rbd_snap_remove              MISSING
-rbd_snap_rollback            MISSING
-rbd_snap_set                 MISSING
+rbd_snap_list              MISSING
+rbd_snap_list_end          MISSING
+rbd_snap_create            MISSING
+rbd_snap_remove            MISSING
+rbd_snap_rollback          MISSING
+rbd_snap_set               MISSING
 
-rbd_read                     MISSING
-rbd_read_iterate             MISSING
-rbd_write                    MISSING
-rbd_aio_write                MISSING
-rbd_aio_read                 MISSING
-rbd_aio_create_completion    MISSING
-rbd_aio_wait_for_complete    MISSING
-rbd_aio_get_return_value     MISSING
-rbd_aio_release              MISSING
+rbd_read                   MISSING
+rbd_read_iterate           MISSING
+rbd_write                  MISSING
+rbd_aio_write              MISSING
+rbd_aio_read               MISSING
+rbd_aio_create_completion  MISSING
+rbd_aio_wait_for_complete  MISSING
+rbd_aio_get_return_value   MISSING
+rbd_aio_release            MISSING
