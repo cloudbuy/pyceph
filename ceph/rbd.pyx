@@ -25,6 +25,16 @@ cdef class Pool:
         if ret != 0:
             make_ex(ret, 'Failed to open pool')
 
+    def copy(self, image_name, dest_name, Pool dest_pool=None):
+        cdef int ret
+
+        if dest_pool is None:
+            dest_pool = self
+
+        ret = rbd_copy(self.ctx, image_name, dest_pool.ctx, dest_name)
+        if ret != 0:
+            make_ex(ret, 'error whilst copying the rbd')
+
     def create(self, image_name, size, order=None):
         cdef int ret, _order
         if order is None:
@@ -62,6 +72,12 @@ cdef class Pool:
     def remove(self, image_name):
         cdef int ret
         ret = rbd_remove(self.ctx, image_name)
+        if ret != 0:
+            raise make_ex(ret, "error removing rbd")
+
+    def rename(self, image_name, dest_name):
+        cdef int ret
+        ret = rbd_rename(self.ctx, image_name, dest_name)
         if ret != 0:
             raise make_ex(ret, "error removing rbd")
 
@@ -106,6 +122,7 @@ cdef class RbdStat:
 
 cdef class Rbd:
 
+    cdef Pool pool
     cdef rados_ioctx_t ctx
     cdef rbd_image_t image
     cdef bint closed
@@ -116,6 +133,7 @@ cdef class Rbd:
 
         self.closed = True
 
+        self.pool = pool
         self.ctx = pool.ctx
         if snap_name != None:
             snap = snap_name
