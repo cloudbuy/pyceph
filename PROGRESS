@@ -1,31 +1,121 @@
+librados
+========
+
+rados_version                                DONE (ceph.rados.version_info)
+
+rados_create                                 DONE (ceph.rados.Rados)
+rados_create_with_context                    MISSING
+rados_connect                                DONE (ceph.rados.Rados.connect)
+rados_shutdown                               MISSING
+
+rados_conf_read_file                         DONE (ceph.rados.Rados.conf_read_file)
+rados_conf_parse_argv                        MISSING
+rados_conf_set                               MISSING
+rados_conf_get                               MISSING
+rados_cluster_stat                           MISSING
+
+rados_pool_list                              DONE (ceph.rados.Rados.list_pools)
+rados_ioctx_create                           MISSING
+rados_ioctx_destroy                          MISSING
+rados_ioctx_pool_stat                        MISSING
+
+rados_pool_lookup                            DONE (ceph.rados.Rados.pool_exists)
+rados_pool_create                            DONE (ceph.rados.Rados.create_pool)
+rados_pool_create_with_auid                  DONE (ceph.rados.Rados.create_pool)
+rados_pool_create_with_crush_rule            DONE (ceph.rados.Rados.create_pool)
+rados_pool_create_with_all                   DONE (ceph.rados.Rados.create_pool)
+rados_pool_delete                            DONE (ceph.rados.Rados.delete_pool)
+rados_ioctx_pool_set_auid                    MISSING
+rados_ioctx_pool_get_auid                    MISSING
+
+rados_ioctx_locator_set_key                  MISSING
+rados_ioctx_get_id                           MISSING
+
+rados_objects_list_open                      MISSING
+rados_objects_list_next                      MISSING
+rados_objects_list_close                     MISSING
+
+rados_ioctx_snap_create                      MISSING
+rados_ioctx_snap_remove                      MISSING
+rados_rollback                               MISSING
+rados_ioctx_snap_set_read                    MISSING
+rados_ioctx_selfmanaged_snap_create          MISSING
+rados_ioctx_selfmanaged_snap_remove          MISSING
+rados_ioctx_selfmanaged_snap_rollback        MISSING
+rados_ioctx_selfmanaged_snap_set_write_ctx   MISSING
+
+rados_ioctx_snap_list                        MISSING
+rados_ioctx_snap_lookup                      MISSING
+rados_ioctx_snap_get_name                    MISSING
+rados_ioctx_snap_get_stamp                   MISSING
+
+rados_get_last_version                       MISSING
+
+rados_write                                  MISSING
+rados_write_full                             MISSING
+rados_clone_range                            MISSING
+rados_append                                 MISSING
+rados_read                                   MISSING
+rados_remove                                 MISSING
+rados_trunc                                  MISSING
+
+rados_getxattr                               MISSING
+rados_setxattr                               MISSING
+rados_rmxattr                                MISSING
+rados_getxattrs                              MISSING
+rados_getxattrs_next                         MISSING
+rados_getxattrs_end                          MISSING
+
+rados_stat                                   MISSING
+rados_tmap_update                            MISSING
+rados_exec                                   MISSING
+
+rados_aio_create_completion                  MISSING
+rados_aio_wait_for_complete                  MISSING
+rados_aio_wait_for_safe                      MISSING
+rados_aio_is_complete                        MISSING
+rados_aio_is_safe                            MISSING
+rados_aio_get_return_value                   MISSING
+rados_aio_get_obj_ver                        MISSING
+rados_aio_release                            MISSING
+rados_aio_write                              MISSING
+rados_aio_append                             MISSING
+rados_aio_write_full                         MISSING
+rados_aio_read                               MISSING
+rados_aio_flush                              MISSING
+
+rados_watch                                  MISSING
+rados_unwatch                                MISSING
+rados_notify                                 MISSING
+
 librbd
 ======
 
-rbd_version                DONE (ceph.rbd.version_info)
-rbd_list                   DONE (ceph.rbd.Pool.list)
-rbd_create                 DONE (ceph.rbd.Pool.create)
-rbd_remove                 DONE (ceph.rbd.Pool.remove)
-rbd_copy                   DONE (ceph.rbd.Pool.copy)
-rbd_rename                 DONE (ceph.rbd.Pool.rename)
+rbd_version                                  DONE (ceph.rbd.version_info)
+rbd_list                                     DONE (ceph.rbd.Pool.list)
+rbd_create                                   DONE (ceph.rbd.Pool.create)
+rbd_remove                                   DONE (ceph.rbd.Pool.remove)
+rbd_copy                                     DONE (ceph.rbd.Pool.copy)
+rbd_rename                                   DONE (ceph.rbd.Pool.rename)
 
-rbd_open                   DONE (ceph.rbd.Pool.open)
-rbd_close                  DONE (ceph.rbd.Rbd.close)
-rbd_resize                 DONE (ceph.rbd.Rbd.resize, ceph.rbd.Pool.resize)
-rbd_stat                   DONE (ceph.rbd.Rbd.stat, ceph.rbd.Pool.stat)
+rbd_open                                     DONE (ceph.rbd.Pool.open)
+rbd_close                                    DONE (ceph.rbd.Rbd.close)
+rbd_resize                                   DONE (ceph.rbd.Rbd.resize, ceph.rbd.Pool.resize)
+rbd_stat                                     DONE (ceph.rbd.Rbd.stat, ceph.rbd.Pool.stat)
 
-rbd_snap_list              DONE (ceph.rbd.RbdSnapshots.list)
-rbd_snap_list_end          "
-rbd_snap_create            DONE (ceph.rbd.RbdSnapshots.create)
-rbd_snap_remove            DONE (ceph.rbd.RbdSnapshots.remove)
-rbd_snap_rollback          DONE (ceph.rbd.RbdSnapshots.rollback)
-rbd_snap_set               DONE (ceph.rbd.RbdSnapshots.set)
+rbd_snap_list                                DONE (ceph.rbd.RbdSnapshots.list)
+rbd_snap_list_end                            "
+rbd_snap_create                              DONE (ceph.rbd.RbdSnapshots.create)
+rbd_snap_remove                              DONE (ceph.rbd.RbdSnapshots.remove)
+rbd_snap_rollback                            DONE (ceph.rbd.RbdSnapshots.rollback)
+rbd_snap_set                                 DONE (ceph.rbd.RbdSnapshots.set)
 
-rbd_read                   MISSING
-rbd_read_iterate           MISSING
-rbd_write                  MISSING
-rbd_aio_write              MISSING
-rbd_aio_read               MISSING
-rbd_aio_create_completion  MISSING
-rbd_aio_wait_for_complete  MISSING
-rbd_aio_get_return_value   MISSING
-rbd_aio_release            MISSING
+rbd_read                                     MISSING
+rbd_read_iterate                             MISSING
+rbd_write                                    MISSING
+rbd_aio_write                                MISSING
+rbd_aio_read                                 MISSING
+rbd_aio_create_completion                    MISSING
+rbd_aio_wait_for_complete                    MISSING
+rbd_aio_get_return_value                     MISSING
+rbd_aio_release                              MISSING
