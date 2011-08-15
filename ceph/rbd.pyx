@@ -2,7 +2,8 @@ from librados cimport *
 from librbd cimport *
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
-from libc.string cimport strncpy, strlen
+from libc.errno cimport ERANGE
+from libc.string cimport strncpy, strlen, memcpy
 from libc.stdio cimport printf
 
 from rados cimport Rados, make_ex
@@ -120,12 +121,72 @@ cdef class RbdStat:
         def __get__(self):
             return self.info.parent_name
 
+cdef class RbdSnapshot:
+
+    cdef readonly uint64_t id
+    cdef readonly uint64_t size
+    cdef readonly char    *name
+
+    def __cinit__(self):
+        self.name = <char *>PyMem_Malloc(128)
+
+    def __dealloc__(self):
+        PyMem_Free(self.name)
+
+    def __str__(self):
+        return self.name
+
+cdef class RbdSnapshots:
+
+    cdef Rbd rbd
+    cdef rbd_image_t image
+
+    def create(self, snap_name):
+        cdef int ret
+        ret = rbd_snap_create(self.image, snap_name)
+        if ret < 0:
+            raise make_ex(ret, "error calling rbd_snap_create")
+
+    def list(self):
+        cdef rbd_snap_info_t *snaps
+        cdef int ret, max_snaps = 10
+        cdef RbdSnapshot snapshot
+
+        while True:
+            snaps = <rbd_snap_info_t *>PyMem_Malloc(sizeof(snaps[0]) * max_snaps)
+            ret = rbd_snap_list(self.image, snaps, &max_snaps)
+            if ret >= 0:
+                max_snaps = ret
+                break
+            elif ret != -ERANGE:
+                raise make_ex(ret, "error calling rbd_snap_list")
+
+            max_snaps = max_snaps * 2
+
+        snapshots = []
+        for i in range(max_snaps):
+            snapshot = RbdSnapshot()
+            strncpy(snapshot.name, snaps[i].name, 128)
+            snapshots.append(snapshot)
+
+        rbd_snap_list_end(snaps)
+
+        return snapshots
+
+    def __str__(self):
+        return str([str(s) for s in self.list()])
+
 cdef class Rbd:
 
     cdef Pool pool
+    cdef RbdSnapshots _snapshots
     cdef rados_ioctx_t ctx
     cdef rbd_image_t image
     cdef bint closed
+
+    property snapshots:
+        def __get__(self):
+            return self._snapshots
 
     def __init__(self, Pool pool, image_name, snap_name=None):
         cdef int ret
@@ -141,6 +202,10 @@ cdef class Rbd:
         ret = rbd_open(self.ctx, image_name, &self.image, snap)
         if ret != 0:
             raise make_ex(ret, "error opening rbd")
+
+        self._snapshots = RbdSnapshots()
+        self._snapshots.rbd = self
+        self._snapshots.image = self.image
 
         self.closed = False
 

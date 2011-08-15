@@ -13,9 +13,9 @@ rbd_close                  DONE (ceph.rbd.Rbd.close)
 rbd_resize                 DONE (ceph.rbd.Rbd.resize, ceph.rbd.Pool.resize)
 rbd_stat                   DONE (ceph.rbd.Rbd.stat, ceph.rbd.Pool.stat)
 
-rbd_snap_list              MISSING
-rbd_snap_list_end          MISSING
-rbd_snap_create            MISSING
+rbd_snap_list              DONE (ceph.rbd.RbdSnapshots.list)
+rbd_snap_list_end          "
+rbd_snap_create            DONE (ceph.rbd.RbdSnapshots.create)
 rbd_snap_remove            MISSING
 rbd_snap_rollback          MISSING
 rbd_snap_set               MISSING
