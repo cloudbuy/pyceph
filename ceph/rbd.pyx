@@ -167,11 +167,41 @@ cdef class RbdSnapshots:
         for i in range(max_snaps):
             snapshot = RbdSnapshot()
             strncpy(snapshot.name, snaps[i].name, 128)
+            snapshot.size = snaps[i].size
+            snapshot.id = snaps[i].id
             snapshots.append(snapshot)
 
         rbd_snap_list_end(snaps)
 
         return snapshots
+
+    def remove(self, snap_name):
+        cdef int ret
+        ret = rbd_snap_remove(self.image, snap_name)
+        if ret < 0:
+            raise make_ex(ret, "error calling rbd_snap_remove")
+
+    def rollback(self, snap_name):
+        cdef int ret
+        ret = rbd_snap_rollback(self.image, snap_name)
+        if ret < 0:
+            raise make_ex(ret, "error calling rbd_snap_remove")
+
+    def set(self, snap_name):
+        cdef int ret
+        ret = rbd_snap_set(self.image, snap_name)
+        if ret < 0:
+            raise make_ex(ret, "error calling rbd_snap_set")
+
+    def __delitem__(self, key):
+        self.remove(key)
+
+    def __getitem__(self, key):
+        snapshots = [s for s in self.list() if s.name == key]
+        if snapshots:
+            return snapshots[0]
+        else:
+            raise KeyError("no snapshot by that name")
 
     def __str__(self):
         return str([str(s) for s in self.list()])

@@ -3,14 +3,7 @@ from libc.string cimport strncpy, strlen
 from libc.stdio cimport printf
 
 from librados cimport *
-
-cdef extern from "errno.h":
-    int ENOENT
-    int EPERM
-    int EIO
-    int ENOSPC
-    int EEXIST
-    int ENODATA
+from libc.errno cimport ENOENT, EPERM, EIO, ENOSPC, EEXIST, ENODATA
 
 cdef uint64_t ANONYMOUS_AUID = 0xffffffffffffffff
 cdef int ADMIN_AUID = 0
