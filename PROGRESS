@@ -52,7 +52,7 @@ rados_ioctx_snap_get_stamp                   MISSING
 rados_get_last_version                       MISSING
 
 rados_write                                  DONE (ceph.rados.Pool.write)
-rados_write_full                             MISSING
+rados_write_full                             DONE (ceph.rados.Pool.write_full)
 rados_clone_range                            MISSING
 rados_append                                 DONE (ceph.rados.Pool.append)
 rados_read                                   DONE (ceph.rados.Pool.read)

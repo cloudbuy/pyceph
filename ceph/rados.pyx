@@ -288,13 +288,33 @@ cdef class Pool:
             raise make_ex(ret, "Pool.truncate(%s): failed to truncate %s" % (self.name, key))
 
     def write(self, key, data, offset=0):
+        cdef int ret, length
+        cdef char *buf
+        buf = data
+        length = strlen(buf)
+
+        ret = rados_write(self.ctx, key, buf, length, offset)
+        if ret == length:
+            return ret
+        elif ret < 0:
+            raise make_ex(ret, "Pool.write(%s): failed to write %s" % (self.name, key))
+        elif ret < length:
+            raise IncompleteWriteError("Wrote only %ld out of %ld bytes" % (ret, length))
+        else:
+            raise make_ex(ret, "Pool.write(%s): logic error: rados_write \
+returned %d, but %d was the maximum number of bytes it could have \
+written." % (self.name, ret, length))
+
+    def write_full(self, key, data, offset=0):
         cdef int ret
         cdef char *buf
         buf = data
 
-        ret = rados_write(self.ctx, key, buf, strlen(buf), offset)
-        if ret < 0:
-            raise make_ex(ret, "Pool.write(%s): failed to write %s" % (self.name, key))
+        ret = rados_write_full(self.ctx, key, buf, strlen(buf), offset)
+        if ret == 0:
+            return ret
+        else:
+            raise make_ex(ret, "Pool.write_full(%s): failed to write_full %s" % (self.name, key))
 
 cdef class ObjectXAttrs:
     pass
@@ -352,8 +372,6 @@ cdef class Object:
 
         PyMem_Free(buf)
         return line
-
-        raise NotImplementedError
 
     def readlines(self, sizehint=None):
         raise NotImplementedError
