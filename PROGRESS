@@ -6,7 +6,7 @@ rados_version                                DONE (ceph.rados.version_info)
 rados_create                                 DONE (ceph.rados.Rados)
 rados_create_with_context                    MISSING
 rados_connect                                DONE (ceph.rados.Rados.connect)
-rados_shutdown                               MISSING
+rados_shutdown                               DONE (ceph.rados.Rados.shutdown)
 
 rados_conf_read_file                         DONE (ceph.rados.Rados.conf_read_file)
 rados_conf_parse_argv                        MISSING
@@ -15,8 +15,8 @@ rados_conf_get                               MISSING
 rados_cluster_stat                           MISSING
 
 rados_pool_list                              DONE (ceph.rados.Rados.list_pools)
-rados_ioctx_create                           MISSING
-rados_ioctx_destroy                          MISSING
+rados_ioctx_create                           DONE (ceph.rados.Rados.open_pool)
+rados_ioctx_destroy                          DONE (ceph.rados.Pool.close)
 rados_ioctx_pool_stat                        MISSING
 
 rados_pool_lookup                            DONE (ceph.rados.Rados.pool_exists)
@@ -25,8 +25,8 @@ rados_pool_create_with_auid                  DONE (ceph.rados.Rados.create_pool)
 rados_pool_create_with_crush_rule            DONE (ceph.rados.Rados.create_pool)
 rados_pool_create_with_all                   DONE (ceph.rados.Rados.create_pool)
 rados_pool_delete                            DONE (ceph.rados.Rados.delete_pool)
-rados_ioctx_pool_set_auid                    MISSING
-rados_ioctx_pool_get_auid                    MISSING
+rados_ioctx_pool_set_auid                    DONE (ceph.rados.Pool.auid)
+rados_ioctx_pool_get_auid                    DONE (ceph.rados.Pool.auid)
 
 rados_ioctx_locator_set_key                  MISSING
 rados_ioctx_get_id                           MISSING
@@ -51,13 +51,13 @@ rados_ioctx_snap_get_stamp                   MISSING
 
 rados_get_last_version                       MISSING
 
-rados_write                                  MISSING
+rados_write                                  DONE (ceph.rados.Pool.write)
 rados_write_full                             MISSING
 rados_clone_range                            MISSING
-rados_append                                 MISSING
-rados_read                                   MISSING
-rados_remove                                 MISSING
-rados_trunc                                  MISSING
+rados_append                                 DONE (ceph.rados.Pool.append)
+rados_read                                   DONE (ceph.rados.Pool.read)
+rados_remove                                 DONE (ceph.rados.Pool.remove)
+rados_trunc                                  DONE (ceph.rados.Pool.trunc)
 
 rados_getxattr                               MISSING
 rados_setxattr                               MISSING
