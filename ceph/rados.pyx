@@ -1,3 +1,5 @@
+import time
+
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 from libc.string cimport strncpy, strlen, strcspn
 from libc.stdio cimport printf
@@ -149,7 +151,7 @@ cdef class Rados:
         return pools
 
     def open_pool(self, char *pool_name):
-        cdef rados_ioctx_t ctx
+        cdef rados_ioctx_t ctx = NULL
         cdef int ret
         ret = rados_ioctx_create(self.cluster, pool_name, &ctx)
         if ret < 0:
@@ -185,7 +187,7 @@ cdef class Pool:
         """
         def __get__(self):
             cdef int ret
-            cdef uint64_t auid
+            cdef uint64_t auid = 0
             ret = rados_ioctx_pool_get_auid(self.ctx, &auid)
             if ret < 0:
                 raise make_ex(ret, "error getting auid of '%s'" % (self.name))
@@ -228,6 +230,12 @@ cdef class Pool:
     def __del__(self):
         self.close()
 
+    def __iter__(self):
+        return ObjectIterator(self)
+
+    def __repr__(self):
+        return '<ceph.rados.Pool(%r)' % (self.name)
+
     def append(self, key, data):
         cdef int ret
         cdef char *buf
@@ -243,7 +251,8 @@ cdef class Pool:
     def get_xattrs(self, key):
         pass
 
-
+    def list(self):
+        return iter(self)
 
     def open(self, key):
         obj = Object()
@@ -278,7 +287,13 @@ cdef class Pool:
             raise make_ex(ret, "Pool.remove(%s): failed to remove %s" % (self.name, key))
 
     def stat(self, key):
-        pass
+        cdef uint64_t psize = 0, pmtime = 0
+        cdef int ret
+
+        ret = rados_stat(self.ctx, key, &psize, <time_t *>(&pmtime))
+        if ret < 0:
+            raise make_ex(ret, "Failed to stat %r" % key)
+        return psize, time.localtime(pmtime)
 
     def truncate(self, key, size):
         cdef int ret
@@ -315,6 +330,32 @@ written." % (self.name, ret, length))
             return ret
         else:
             raise make_ex(ret, "Pool.write_full(%s): failed to write_full %s" % (self.name, key))
+
+cdef class ObjectIterator:
+
+    def __init__(self, Pool pool):
+        cdef int ret
+        self.pool = pool
+
+        ret = rados_objects_list_open(self.pool.ctx, &self.ctx)
+        if ret < 0:
+            raise make_ex(ret, "error iterating over the objects in %r" % self.pool)
+
+    def __del__(self):
+        rados_objects_list_close(self.ctx)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        cdef char *key = NULL
+        cdef int ret
+
+        ret = rados_objects_list_next(self.ctx, <const_char_pp>&key)
+        if ret < 0:
+            raise StopIteration
+
+        return self.pool.open(key)
 
 cdef class ObjectXAttrs:
     pass
@@ -378,6 +419,9 @@ cdef class Object:
 
     def seek(self, offset, whence=None):
         raise NotImplementedError
+
+    def stat(self):
+        return self.pool.stat(self.key)
 
     def tell(self):
         return self.pos

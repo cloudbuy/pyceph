@@ -1,6 +1,8 @@
 from libc.stdint cimport uint8_t, uint64_t
 
-ctypedef uint8_t  __u8
+cdef extern from *:
+    ctypedef uint8_t  __u8
+    ctypedef char* const_char_pp "const char **"
 
 cdef extern from "time.h":
     ctypedef void time_t
@@ -80,7 +82,7 @@ cdef extern from "rados/librados.h":
 
 # Objects
     int rados_objects_list_open(rados_ioctx_t io, rados_list_ctx_t *ctx)
-    int rados_objects_list_next(rados_list_ctx_t ctx, char **entry)
+    int rados_objects_list_next(rados_list_ctx_t ctx, const_char_pp entry)
     void rados_objects_list_close(rados_list_ctx_t ctx)
 
 # Snapshots

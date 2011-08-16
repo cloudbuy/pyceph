@@ -31,9 +31,9 @@ rados_ioctx_pool_get_auid                    DONE (ceph.rados.Pool.auid)
 rados_ioctx_locator_set_key                  MISSING
 rados_ioctx_get_id                           MISSING
 
-rados_objects_list_open                      MISSING
-rados_objects_list_next                      MISSING
-rados_objects_list_close                     MISSING
+rados_objects_list_open                      DONE (ceph.rados.Pool.list)
+rados_objects_list_next                      DONE (ceph.rados.ObjectIterator.__next__)
+rados_objects_list_close                     DONE (ceph.rados.ObjectIterator.__del__)
 
 rados_ioctx_snap_create                      MISSING
 rados_ioctx_snap_remove                      MISSING

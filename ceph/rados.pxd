@@ -1,4 +1,4 @@
-from librados cimport rados_ioctx_t
+from librados cimport rados_ioctx_t, rados_list_ctx_t
 
 cdef make_ex(int ret, str msg)
 
@@ -28,12 +28,18 @@ cdef class Pool:
 
     cdef char *_read(self, char *key, int length, int offset)
 
+cdef class ObjectIterator:
+
+    cdef Pool              pool
+    cdef rados_list_ctx_t  ctx
+
 cdef class ObjectXAttrs:
-    pass
+
+    cdef Object obj
 
 cdef class Object:
 
     cdef Pool  pool
-    cdef char *key
+    cdef readonly char *key
     cdef int   pos
     cdef int   state
