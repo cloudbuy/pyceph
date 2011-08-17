@@ -66,7 +66,7 @@ rados_getxattrs                              MISSING
 rados_getxattrs_next                         MISSING
 rados_getxattrs_end                          MISSING
 
-rados_stat                                   MISSING
+rados_stat                                   DONE (ceph.rados.Pool.stat)
 rados_tmap_update                            MISSING
 rados_exec                                   MISSING
 
