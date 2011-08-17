@@ -17,7 +17,7 @@ rados_cluster_stat                           MISSING
 rados_pool_list                              DONE (ceph.rados.Rados.list_pools)
 rados_ioctx_create                           DONE (ceph.rados.Rados.open_pool)
 rados_ioctx_destroy                          DONE (ceph.rados.Pool.close)
-rados_ioctx_pool_stat                        MISSING
+rados_ioctx_pool_stat                        DONE (ceph.rados.Pool.stats)
 
 rados_pool_lookup                            DONE (ceph.rados.Rados.pool_exists)
 rados_pool_create                            DONE (ceph.rados.Rados.create_pool)
