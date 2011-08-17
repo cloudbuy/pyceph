@@ -26,6 +26,12 @@ cdef class Pool:
         if ret != 0:
             make_ex(ret, 'Failed to open pool')
 
+    def __del__(self):
+        self.close()
+
+    def close(self):
+        rados_ioctx_destroy(self.ctx)
+
     def copy(self, image_name, dest_name, Pool dest_pool=None):
         cdef int ret
 
@@ -239,7 +245,7 @@ cdef class Rbd:
 
         self.closed = False
 
-    def __dealloc__(self):
+    def __del__(self):
         self.close()
 
     def close(self):
