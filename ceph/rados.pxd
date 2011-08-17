@@ -26,8 +26,6 @@ cdef class Pool:
     cdef rados_ioctx_t ctx
     cdef char         *name
 
-    cdef char *_read(self, char *key, int length, int offset)
-
 cdef class ObjectIterator:
 
     cdef Pool              pool

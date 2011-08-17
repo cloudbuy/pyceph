@@ -257,8 +257,7 @@ cdef class Pool:
         obj.pool = self
         return obj
 
-    cdef char *_read(self, char *key, int length, int offset):
-        cdef int ret
+    def read(self, key, length=1024, offset=0):
         cdef char *buf
 
         buf = <char *>PyMem_Malloc(length + 1)
@@ -266,14 +265,6 @@ cdef class Pool:
         if ret < 0:
             raise make_ex(ret, "Pool.read(%s): failed to read %s" % (self.name, key))
 
-        if ret == 0:
-            return NULL
-
-        return buf
-
-    def read(self, key, length=1024, offset=0):
-        cdef char *buf
-        buf = self._read(key, length, offset)
         buf[length + 1] = '\0'
         return buf
 
@@ -459,8 +450,13 @@ cdef class Object:
     def readline(self, size=1024):
         cdef char *buf, *line
         cdef int pos
-        buf = self.pool._read(self.key, size, self.pos)
-        if buf == NULL:
+
+        buf = <char *>PyMem_Malloc(size + 1)
+        ret = rados_read(self.pool.ctx, self.key, buf, size, self.pos)
+        if ret < 0:
+            raise make_ex(ret, "Pool.read(%s): failed to read %s" % (self.name, self.key))
+
+        if ret == 0:
             PyMem_Free(buf)
             return ''
 
