@@ -59,12 +59,12 @@ rados_read                                   DONE (ceph.rados.Pool.read)
 rados_remove                                 DONE (ceph.rados.Pool.remove)
 rados_trunc                                  DONE (ceph.rados.Pool.trunc)
 
-rados_getxattr                               MISSING
-rados_setxattr                               MISSING
-rados_rmxattr                                MISSING
-rados_getxattrs                              MISSING
-rados_getxattrs_next                         MISSING
-rados_getxattrs_end                          MISSING
+rados_getxattr                               DONE (ceph.rados.Object.xattrs[])
+rados_setxattr                               DONE (ceph.rados.Object.xattrs[])
+rados_rmxattr                                DONE (ceph.rados.Object.xattrs[])
+rados_getxattrs                              DONE (ceph.rados.Object.xattrs)
+rados_getxattrs_next                         DONE (ceph.rados.Object.xattrs)
+rados_getxattrs_end                          DONE (ceph.rados.Object.xattrs)
 
 rados_stat                                   DONE (ceph.rados.Pool.stat)
 rados_tmap_update                            MISSING
