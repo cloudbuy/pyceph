@@ -490,7 +490,7 @@ cdef class Object:
         self.pool.truncate(self.key, s)
 
     def write(self, value):
-        self.pool.write(self.key, value, self.pos)
+        self.pos += self.pool.write(self.key, value, self.pos)
 
     def writelines(self, lines):
         for line in lines:
