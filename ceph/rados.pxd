@@ -1,4 +1,4 @@
-from librados cimport rados_ioctx_t, rados_list_ctx_t
+from librados cimport rados_ioctx_t, rados_list_ctx_t, rados_xattrs_iter_t
 
 cdef make_ex(int ret, str msg)
 
@@ -36,6 +36,11 @@ cdef class ObjectIterator:
 cdef class ObjectXAttrs:
 
     cdef Object obj
+
+cdef class ObjectXAttrsIterator:
+
+    cdef Object              obj
+    cdef rados_xattrs_iter_t ctx
 
 cdef class Object:
 

@@ -248,9 +248,6 @@ cdef class Pool:
     def close(self):
         rados_ioctx_destroy(self.ctx)
 
-    def get_xattrs(self, key):
-        pass
-
     def list(self):
         return iter(self)
 
@@ -358,13 +355,78 @@ cdef class ObjectIterator:
         return self.pool.open(key)
 
 cdef class ObjectXAttrs:
-    pass
+
+    def __init__(self, Object obj):
+        self.obj = obj
+
+    def __delitem__(self, key):
+        cdef int ret
+
+        ret = rados_rmxattr(self.obj.pool.ctx, self.obj.key, key)
+        if ret < 0:
+            raise make_ex(ret, "Failed to delete key %r xattr %r" % (self.obj.key, key))
+
+    def __getitem__(self, key):
+        cdef int ret
+        cdef char buf[4096]
+
+        ret = rados_getxattr(self.obj.pool.ctx, self.obj.key, key, buf, 4066)
+        if ret < 0:
+            raise make_ex(ret, "Failed to get xattr %r" % key)
+
+        buf[ret] = '\0'
+
+        return buf
+
+    def __setitem__(self, key, value):
+        cdef int ret
+        cdef char *k = key, *v = value
+        ret = rados_setxattr(self.obj.pool.ctx, self.obj.key, k, v, strlen(v))
+        if ret < 0:
+            raise make_ex(ret, "Failed to set xattr %r" % key)
+
+    def __iter__(self):
+        return ObjectXAttrsIterator(self.obj)
+
+cdef class ObjectXAttrsIterator:
+
+    def __init__(self, Object obj):
+        cdef int ret
+        self.obj = obj
+        ret = rados_getxattrs(obj.pool.ctx, obj.key, &self.ctx)
+        if ret != 0:
+            raise make_ex(ret, "Failed to get rados xattrs for %r" % obj)
+
+    def __del__(self):
+        rados_getxattrs_end(self.ctx)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        cdef char *name = NULL, *value = NULL
+        cdef int ret
+        cdef size_t length = 0
+
+        ret = rados_getxattrs_next(self.ctx, <const_char_pp>&name, <const_char_pp>&value, &length)
+        if ret != 0:
+            raise make_ex(ret, "error iterating over the extended attributes in %r" % self.obj)
+
+        if length == 0:
+            raise StopIteration
+
+        value[length] = '\0'
+        return name, value
 
 cdef class Object:
     """
     Represents an object stored in a RADOS pool, providing a file-like
     interface to it.
     """
+
+    property xattrs:
+        def __get__(self):
+            return ObjectXAttrs(self)
 
     def __cinit__(self):
         self.pos = 0

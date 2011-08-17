@@ -2,6 +2,7 @@ from libc.stdint cimport uint8_t, uint64_t
 
 cdef extern from *:
     ctypedef uint8_t  __u8
+    ctypedef char* const_char_p "const char *"
     ctypedef char* const_char_pp "const char **"
 
 cdef extern from "time.h":
@@ -119,8 +120,8 @@ cdef extern from "rados/librados.h":
     int rados_rmxattr(rados_ioctx_t io, char *o, char *name)
 
     int rados_getxattrs(rados_ioctx_t io, char *oid, rados_xattrs_iter_t *iter)
-    int rados_getxattrs_next(rados_xattrs_iter_t iter, char **name,
-                             char **val, size_t *len)
+    int rados_getxattrs_next(rados_xattrs_iter_t iter, const_char_pp name,
+                             const_char_pp val, size_t *len)
     void rados_getxattrs_end(rados_xattrs_iter_t iter)
 
 # Misc
