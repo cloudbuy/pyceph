@@ -24,18 +24,18 @@ cdef class RadosPoolsIterator:
     cdef object pools_iter
 
 cdef class PoolStats:
-    cdef readonly int num_bytes
-    cdef readonly int num_kb
-    cdef readonly int num_objects
-    cdef readonly int num_object_clones
-    cdef readonly int num_object_copies
-    cdef readonly int num_objects_missing_on_primary
-    cdef readonly int num_objects_unfound
-    cdef readonly int num_objects_degraded
-    cdef readonly int num_rd
-    cdef readonly int num_rd_kb
-    cdef readonly int num_wr
-    cdef readonly int num_wr_kb
+    cdef readonly long num_bytes
+    cdef readonly long num_kb
+    cdef readonly long num_objects
+    cdef readonly long num_object_clones
+    cdef readonly long num_object_copies
+    cdef readonly long num_objects_missing_on_primary
+    cdef readonly long num_objects_unfound
+    cdef readonly long num_objects_degraded
+    cdef readonly long num_rd
+    cdef readonly long num_rd_kb
+    cdef readonly long num_wr
+    cdef readonly long num_wr_kb
 
 cdef class Pool:
 
