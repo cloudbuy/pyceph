@@ -89,6 +89,10 @@ cdef class Rados:
             ret = rados_conf_read_file(self.cluster, p)
             if ret != 0:
                 raise make_ex(ret, "error calling conf_read_file")
+            try:
+                self.connect()
+            except:
+                pass
 
     def __del__(self):
         self.shutdown()
@@ -361,7 +365,7 @@ cdef class ObjectXAttrs:
         cdef int ret
         cdef char buf[4096]
 
-        ret = rados_getxattr(self.obj.pool.ctx, self.obj.key, key, buf, 4066)
+        ret = rados_getxattr(self.obj.pool.ctx, self.obj.key, key, buf, 4096)
         if ret < 0:
             raise make_ex(ret, "Failed to get xattr %r" % key)
 
