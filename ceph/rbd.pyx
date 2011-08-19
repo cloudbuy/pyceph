@@ -6,7 +6,7 @@ from libc.errno cimport ERANGE
 from libc.string cimport strncpy, strlen, memcpy
 from libc.stdio cimport printf
 
-from rados cimport Rados, make_ex
+from rados cimport Rados, Pool as _Pool, make_ex
 
 cdef int _major = 0, _minor = 0, _extra = 0
 rbd_version(&_major, &_minor, &_extra)
@@ -16,15 +16,10 @@ cdef class Pool:
 
     cdef rados_ioctx_t ctx
 
-    def __init__(self, Rados rados, bytes pool_name=b'rbd'):
+    def __init__(self, _Pool pool):
         cdef int ret
 
-        if not rados.pool_exists(pool_name):
-            raise Exception('No pool exists by that name')
-
-        ret = rados_ioctx_create(rados.cluster, pool_name, &self.ctx)
-        if ret != 0:
-            make_ex(ret, 'Failed to open pool')
+        self.ctx = pool.ctx
 
     def __del__(self):
         self.close()
