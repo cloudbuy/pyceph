@@ -1,7 +1,7 @@
 import time
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
-from libc.string cimport strncpy, strlen, strcspn
+from libc.string cimport strcpy, strncpy, strlen, strcspn
 from libc.stdio cimport printf
 
 from librados cimport *
@@ -299,8 +299,12 @@ cdef class Pool:
         return iter(self)
 
     def open(self, key):
+        cdef char* objkey = key
+        objkey = key
+
         obj = Object()
-        obj.key = key
+        obj.key = <char *>PyMem_Malloc(strlen(objkey) + 1)
+        strcpy(obj.key, objkey)
         obj.pool = self
         return obj
 
@@ -443,6 +447,7 @@ cdef class ObjectXAttrsIterator:
 
     def __next__(self):
         cdef char *name = NULL, *value = NULL
+        cdef char *n, *v
         cdef int ret
         cdef size_t length = 0
 
@@ -453,14 +458,24 @@ cdef class ObjectXAttrsIterator:
         if length == 0:
             raise StopIteration
 
-        value[length] = '\0'
-        return name, value
+        n = <char *>PyMem_Malloc(strlen(name) + 1)
+        strcpy(n, name)
+
+        v = <char *>PyMem_Malloc(length + 1)
+        strncpy(v, value, length)
+        v[length] = '\0'
+
+        return n, v
 
 cdef class Object:
     """
     Represents an object stored in a RADOS pool, providing a file-like
     interface to it.
     """
+
+    property name:
+        def __get__(self):
+            return self.key
 
     property xattrs:
         def __get__(self):
@@ -469,6 +484,9 @@ cdef class Object:
     def __cinit__(self):
         self.pos = 0
         self.state = FO_OPEN
+
+    def __dealloc__(self):
+        PyMem_Free(self.key)
 
     def __del__(self):
         self.close()

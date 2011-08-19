@@ -59,6 +59,6 @@ cdef class ObjectXAttrsIterator:
 cdef class Object:
 
     cdef Pool  pool
-    cdef readonly char *key
+    cdef char *key
     cdef int   pos
     cdef int   state
