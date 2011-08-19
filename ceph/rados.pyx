@@ -111,14 +111,16 @@ cdef class Rados:
         if ret != 0:
             raise make_ex(ret, "error calling connect")
 
-    def create_pool(self, pool_name, auid=None, crush_rule=None):
+        self.pools = RadosPools(self)
+
+    cdef create_pool(self, char *pool_name, int auid, int crush_rule):
         cdef int ret
-        if auid is None:
-            if crush_rule is None:
+        if auid == -1:
+            if crush_rule == -1:
                 ret = rados_pool_create(self.cluster, pool_name)
             else:
                 ret = rados_pool_create_with_all(self.cluster, pool_name, auid, crush_rule)
-        elif crush_rule is None:
+        elif crush_rule == -1:
             ret = rados_pool_create_with_auid(self.cluster, pool_name, auid)
         else:
             ret = rados_pool_create_with_crush_rule(self.cluster, pool_name, crush_rule)
@@ -126,13 +128,13 @@ cdef class Rados:
         if ret < 0:
             raise make_ex(ret, "error creating pool '%s'" % pool_name)
 
-    def delete_pool(self, pool_name):
+    cdef delete_pool(self, char *pool_name):
         cdef int ret
         ret = rados_pool_delete(self.cluster, pool_name)
         if ret < 0:
             raise make_ex(ret, "error deleting pool '%s'" % pool_name)
 
-    def list_pools(self):
+    cdef list_pools(self):
         cdef int ret, length, total = 0
         cdef char buf[1024], *name
 
@@ -154,7 +156,7 @@ cdef class Rados:
 
         return pools
 
-    def open_pool(self, char *pool_name):
+    cdef open_pool(self, char *pool_name):
         cdef rados_ioctx_t ctx = NULL
         cdef int ret
         ret = rados_ioctx_create(self.cluster, pool_name, &ctx)
@@ -165,7 +167,7 @@ cdef class Rados:
         pool.ctx = ctx
         return pool
 
-    def pool_exists(self, char *pool_name):
+    cdef pool_exists(self, char *pool_name):
         cdef int ret
         ret = rados_pool_lookup(self.cluster, pool_name)
         if ret >= 0:
@@ -178,10 +180,51 @@ cdef class Rados:
     def shutdown(self):
         rados_shutdown(self.cluster)
 
-cdef class PoolStats:
+cdef class RadosPools:
 
-    def __cinit__(self):
-        pass
+    def __init__(self, Rados rados):
+        self.rados = rados
+
+    def __contains__(self, key):
+        return self.rados.pool_exists(key)
+
+    def __delitem__(self, key):
+        try:
+            self.rados.delete_pool(key)
+        except ObjectNotFound:
+            raise KeyError("No pool with the name '%s'" % key)
+
+    def __getitem__(self, key):
+        try:
+            return self.rados.open_pool(key)
+        except ObjectNotFound:
+            raise KeyError("No pool with the name '%s'" % key)
+
+    def __iter__(self):
+        return RadosPoolsIterator(self.rados, self.rados.list_pools())
+
+    def create(self, name, auid=None, crush_rule=None):
+        cdef int _auid = -1, _crush = -1
+        if auid is not None:
+            _auid = auid
+
+        if crush_rule is not None:
+            _crush = crush_rule
+
+        return self.rados.create_pool(name, _auid, _crush)
+
+cdef class RadosPoolsIterator:
+
+    def __init__(self, Rados rados, pools):
+        self.rados = rados
+        self.pools_iter = iter(pools)
+
+    def __next__(self):
+        pool_name = next(self.pools_iter)
+        return self.rados.open_pool(pool_name)
+
+cdef class PoolStats:
+    pass
 
 cdef class Pool:
 
@@ -238,7 +281,7 @@ cdef class Pool:
         return ObjectIterator(self)
 
     def __repr__(self):
-        return '<ceph.rados.Pool(%r)' % (self.name)
+        return '<ceph.rados.Pool(%r)>' % (self.name)
 
     def append(self, key, data):
         cdef int ret

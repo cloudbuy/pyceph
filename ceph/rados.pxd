@@ -6,6 +6,22 @@ cdef class Rados:
 
     cdef void *cluster
     cdef int   state
+    cdef readonly RadosPools pools
+
+    cdef create_pool(self, char *pool_name, int auid, int crush_rule)
+    cdef delete_pool(self, char *pool_name)
+    cdef list_pools(self)
+    cdef open_pool(self, char *pool_name)
+    cdef pool_exists(self, char *pool_name)
+
+cdef class RadosPools:
+
+    cdef Rados rados
+
+cdef class RadosPoolsIterator:
+
+    cdef Rados  rados
+    cdef object pools_iter
 
 cdef class PoolStats:
     cdef readonly int num_bytes
@@ -24,7 +40,7 @@ cdef class PoolStats:
 cdef class Pool:
 
     cdef rados_ioctx_t ctx
-    cdef char         *name
+    cdef str           name
 
 cdef class ObjectIterator:
 
