@@ -316,7 +316,7 @@ cdef class Pool:
         if ret < 0:
             raise make_ex(ret, "Pool.read(%s): failed to read %s" % (self.name, key))
 
-        buf[length + 1] = '\0'
+        buf[length] = '\0'
         return buf
 
     def remove(self, key):
