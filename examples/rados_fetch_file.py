@@ -1,9 +1,8 @@
 from ceph.rados import Rados
 
 rados = Rados(conf_file='/etc/ceph/ceph.conf')
-rados.connect()
 
-pool = rados.open_pool('example')
+pool = rados.pools['example']
 for line in pool.open('foo'):
     print line
 
