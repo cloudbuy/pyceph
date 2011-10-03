@@ -277,6 +277,9 @@ cdef class Pool:
     def __del__(self):
         self.close()
 
+    def __exit__(self, type, value, traceback):
+        self.close()
+
     def __iter__(self):
         return ObjectIterator(self)
 
