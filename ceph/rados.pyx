@@ -359,12 +359,12 @@ cdef class Pool:
 returned %d, but %d was the maximum number of bytes it could have \
 written." % (self.name, ret, length))
 
-    def write_full(self, key, data, offset=0):
+    def write_full(self, key, data):
         cdef int ret
         cdef char *buf
         buf = data
 
-        ret = rados_write_full(self.ctx, key, buf, strlen(buf), offset)
+        ret = rados_write_full(self.ctx, key, buf, strlen(buf))
         if ret == 0:
             return ret
         else:
