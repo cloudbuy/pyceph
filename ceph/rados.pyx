@@ -2,6 +2,7 @@ import time
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 from libc.string cimport strcpy, strncpy, strlen, strcspn
+from libc.stdlib cimport free
 from libc.stdio cimport printf
 
 from librados cimport *
@@ -442,33 +443,26 @@ cdef class ObjectXAttrsIterator:
         if ret != 0:
             raise make_ex(ret, "Failed to get rados xattrs for %r" % obj)
 
-    def __del__(self):
-        rados_getxattrs_end(self.ctx)
-
     def __iter__(self):
         return self
 
     def __next__(self):
         cdef char *name = NULL, *value = NULL
-        cdef char *n, *v
         cdef int ret
         cdef size_t length = 0
+        cdef object pyname, pyvalue
 
         ret = rados_getxattrs_next(self.ctx, <const_char_pp>&name, <const_char_pp>&value, &length)
         if ret != 0:
             raise make_ex(ret, "error iterating over the extended attributes in %r" % self.obj)
 
         if length == 0:
+            rados_getxattrs_end(self.ctx)
             raise StopIteration
 
-        n = <char *>PyMem_Malloc(strlen(name) + 1)
-        strcpy(n, name)
+        value[length] = '\0'
 
-        v = <char *>PyMem_Malloc(length + 1)
-        strncpy(v, value, length)
-        v[length] = '\0'
-
-        return n, v
+        return name, value
 
 cdef class Object:
     """
