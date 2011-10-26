@@ -5,6 +5,7 @@ cdef extern from "rbd/librbd.h":
 
     ctypedef void *rbd_snap_t
     ctypedef void *rbd_image_t
+    ctypedef int (*librbd_progress_fn_t)(uint64_t offset, uint64_t total, void *ptr)
 
     ctypedef struct rbd_snap_info_t:
         uint64_t id
@@ -24,16 +25,24 @@ cdef extern from "rbd/librbd.h":
         char     parent_name[24]
 
     void rbd_version(int *major, int *minor, int *extra)
-    int  rbd_list(rados_ioctx_t io, char *names, size_t *size)
+
+    # images
+    int rbd_list(rados_ioctx_t io, char *names, size_t *size)
     int rbd_create(rados_ioctx_t io, char *name, uint64_t size, int *order)
     int rbd_remove(rados_ioctx_t io, char *name)
-    int rbd_copy(rados_ioctx_t src_io_ctx, char *srcname, rados_ioctx_t dest_io_ctx, char *destname)
+    int rbd_remove_with_progress(rados_ioctx_t io, char *name,
+                                 librbd_progress_fn_t cb, void *cbdata)
     int rbd_rename(rados_ioctx_t src_io_ctx, char *srcname, char *destname)
 
     int rbd_open(rados_ioctx_t io, char *name, rbd_image_t *image, char *snap_name)
     int rbd_close(rbd_image_t image)
     int rbd_resize(rbd_image_t image, uint64_t size)
+    int rbd_resize_with_progress(rbd_image_t image, uint64_t size,
+                                 librbd_progress_fn_t cb, void *cbdata)
     int rbd_stat(rbd_image_t image, rbd_image_info_t *info, size_t infosize)
+    int rbd_copy(rbd_image_t image, rados_ioctx_t dest, char *destname)
+    int rbd_copy_with_progress(rbd_image_t image, rados_ioctx_t dest, char *destname,
+                               librbd_progress_fn_t cb, void *cbdata)
 
     int rbd_snap_list(rbd_image_t image, rbd_snap_info_t *snaps, int *max_snaps)
     void rbd_snap_list_end(rbd_snap_info_t *snaps)

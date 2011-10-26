@@ -33,7 +33,9 @@ cdef class Pool:
         if dest_pool is None:
             dest_pool = self
 
-        ret = rbd_copy(self.ctx, image_name, dest_pool.ctx, dest_name)
+        image = Rbd(self, image_name)
+
+        ret = rbd_copy(image.image, dest_pool.ctx, dest_name)
         if ret != 0:
             make_ex(ret, 'error whilst copying the rbd')
 
