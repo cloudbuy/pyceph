@@ -2,7 +2,6 @@ import time
 
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 from libc.string cimport strcpy, strncpy, strlen, strcspn
-from libc.stdlib cimport free
 from libc.stdio cimport printf
 
 from librados cimport *
@@ -450,7 +449,6 @@ cdef class ObjectXAttrsIterator:
         cdef char *name = NULL, *value = NULL
         cdef int ret
         cdef size_t length = 0
-        cdef object pyname, pyvalue
 
         ret = rados_getxattrs_next(self.ctx, <const_char_pp>&name, <const_char_pp>&value, &length)
         if ret != 0:
